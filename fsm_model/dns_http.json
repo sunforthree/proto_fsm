@@ -1,0 +1,25 @@
+{
+    "model": "DNS-HTTP",
+
+    "states_number": 3,
+
+    "head": "S0",
+
+    "output": "DNS-HTTP",
+
+    "states": [
+                {
+                    "context": "dns-query",
+                    "rule": [
+                            {
+                                "parser": "IP", 
+                                "match": [
+
+                                ]
+                            }
+                    ]
+                }, 
+                {}, 
+                {}
+    ]
+}

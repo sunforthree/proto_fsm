@@ -1,0 +1,63 @@
+
+model = "DNS-HTTP";
+
+states = ["S0", "S1", "S2"];
+
+head = "S0";
+
+max_inst = 10000;
+
+inst_key_type = "str";
+
+output = "DNS-HTTP";
+
+jump_from_wrong_state = false;
+
+multiple_instance = False;
+
+S0 = (
+        {
+          context: {text="dns-query";};
+          rule:    (
+                     {parser="UDP/IP"; match=(("l7-proto","str","eq","DNS")); chain="l4-payload";},
+                     {parser="DNS";    match=(("DNS-stage", "str", "eq", "QUERY")); chain="";}
+                   );
+          actions: {
+                     associate: {keys=["sip","Domain"]; exception=["create"]};
+                     extract:   (("int", "replace", "sip"), ("str", "replace", "Domain"));
+                     goto: "S1";
+                     report: true;
+                   };
+        }
+     );
+
+S1 = (
+        {
+          context: {text="dns-response";};
+          rule:    (
+                     {parser="UDP/IP"; match=(("l7-proto","str","eq","DNS")); chain="l4-payload";},
+                     {parser="DNS";    match=(("DNS-stage", "str", "eq", "RESPONSE")); chain="";}
+                   );
+          actions: {
+                     associate: {keys=["sip","Domain"]; exception=[]};
+                     extract:   (("int", "replace", "sip"), ("str", "replace", "Domain"));
+                     goto: "S2";
+                     report: true;
+                   };
+        }
+     );
+
+S2 = (
+        {
+          context: {text="http";};
+          rule:    (
+                     {parser="TCP/IP";     match=(("l7-proto","str","eq","HTTP")); chain="l4-payload"},
+                     {parser="HTTP";       match=(("HTTP-stage", "str", "eq", "REQUESTED")); chain="";}
+                   );
+          actions: {
+                     associate: {keys=["sip","Host"]; exception=[];};
+                     extract:   (("int", "replace", "sip"), ("str", "replace", "Host"));
+                     goto: "";
+                     report: true;
+                   };        }
+     );

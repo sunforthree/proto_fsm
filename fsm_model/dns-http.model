@@ -1,0 +1,4 @@
+state_number = 3
+states = ['S0', 'S1', 'S2']
+transition_number = 2
+

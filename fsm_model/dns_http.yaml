@@ -1,0 +1,20 @@
+model: 'DNS-HTTP'
+
+states: 
+    - 'S0'
+    - 'S1'
+    - 'S2'
+
+head: 'S0'
+
+max_inst: 10000
+
+output: 'DNS-HTTP'
+
+S0:
+  - {context: 'dns-query'}
+  - {rule: 
+          - {parser: 'IP'}
+          - {parser: 'UDP'}
+          - {parser: 'DNS'}
+    }
