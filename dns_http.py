@@ -2,7 +2,6 @@ from scapy import packet
 from Machine import State, Transition, Rule, Parser, Action
 from scapy.all import IP, ls, UDP, DNS, DNSQR, sr1
 from scapy2dict import to_dict
-from collections import ChainMap
 
 # just a fake class, not defined yet.
 from packet_generator import Packet
@@ -15,7 +14,7 @@ pars_ip_S0_to_S1 = Parser('IP', match_ip_S0_to_S1)
 match_udp_S0_to_S1 = {'sport': 53, 'dport': 53}
 pars_udp_S0_to_S1 = Parser('UDP', match_udp_S0_to_S1)
 match_dns_S0_to_S1 = {'qr': 0}
-pars_dns_S0_to_S1 = Parser('DNS', match_udp_S0_to_S1)
+pars_dns_S0_to_S1 = Parser('DNS', match_dns_S0_to_S1)
 
 parser_S0_to_S1 = [pars_ip_S0_to_S1, pars_udp_S0_to_S1, pars_dns_S0_to_S1]
 
@@ -58,7 +57,7 @@ exe_state_number = 0
 exe_transition_number = 0
 
 # Craft a DNS request and capture the returned DNS response.
-dns_req = IP(dst='8.8.8.8')/UDP(dport=53)/DNS(rd=1, qd=DNSQR(qname='www.thepacketgeek.com'))
+dns_req = IP(dst='8.8.8.8')/UDP(dport=53)/DNS(rd=1, qd=DNSQR(qname='www.baidu.com'))
 answer = sr1(dns_req, verbose=0)
 dns_req_dict = to_dict(dns_req)
 answer_dict = to_dict(answer)
@@ -83,9 +82,12 @@ while end_flag:
     for parser in now_Rule.get_rule_list():
         # get a parser which need to match
         paser_match_dict = parser.get_match_dict()
+        print(paser_match_dict)
         paser_layer_name = parser.get_layer()
+        print(paser_layer_name)
         for key in paser_match_dict.keys():
             if paser_match_dict[key] == exe_packet.get(paser_layer_name)[key]:
+                print(key + str(exe_packet.get(paser_layer_name)[key]))
                 continue
             else:
                 # if not true, exit.

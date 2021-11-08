@@ -2,8 +2,20 @@
 from Event import Event
 from scapy.all import *
 
-# parser
+# Parser
 class Parser:
+    def __init__(self, layer, match_dict):
+        self.layer = layer
+        self.match_dict = match_dict
+
+    def get_layer(self):
+        return self.layer
+
+    def get_match_dict(self):
+        return self.match_dict
+
+# MatchObj
+class MatchObj:
     def __init__(self, layer, match_dict):
         self.layer = layer
         self.match_dict = match_dict
@@ -16,7 +28,7 @@ class Parser:
 
 
 # find a dict of rules.
-# rule_list : a list of Parsers.
+# rule_list: a list of MatchObjs.
 class Rule:
     def __init__(self, rule_list):
         self.rule_list = rule_list

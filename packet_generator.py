@@ -20,7 +20,7 @@ if __name__ == '__main__':
     # print(str)
 
     # Craft a DNS request and capture the returned DNS response.
-    dns_req = IP(dst='8.8.8.8')/UDP(dport=53)/DNS(rd=1, qd=DNSQR(qname='www.thepacketgeek.com'))
+    dns_req = IP(dst='8.8.8.8')/UDP(dport=53)/DNS(rd=1, qd=DNSQR(qname='www.baidu.com'))
     answer = sr1(dns_req, verbose=0)
 
     ls(answer[IP])
