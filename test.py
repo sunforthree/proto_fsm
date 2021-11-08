@@ -30,4 +30,4 @@ test_dict = {
     }
 }
 
-print(test_dict['transitions'])
+print(test_dict['transitions'].keys())
