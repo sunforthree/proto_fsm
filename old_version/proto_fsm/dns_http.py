@@ -1,5 +1,5 @@
 from scapy import packet
-from Machine import State, Transition, Rule, Parser, Action
+from proto_fsm.Machine import State, Transition, Rule, Parser, Action
 from scapy.all import IP, ls, UDP, DNS, DNSQR, sr1
 from scapy2dict import to_dict
 

@@ -1,6 +1,8 @@
-# This project is from littlezz in Github, the url is https://github.com/littlezz/scapy2dict/blob/master/scapy2dict.py
-# Why I rewrite is the old scapy2dict can't run in python3 and the latest scapy.
-# ChainMap is a bigger dict and it can put multi-dicts to a list.
+'''
+    This project is from littlezz in Github, the url is https://github.com/littlezz/scapy2dict/blob/master/scapy2dict.py
+    Why I rewrite is the old scapy2dict can't run in python3 and the latest scapy.
+    ChainMap is a bigger dict and it can put multi-dicts to a list.
+'''
 
 from collections import ChainMap
 

@@ -1,34 +1,7 @@
-from os.path import abspath, dirname
-import json
+from fsm_file_generator import *
 
-# switch the dict to the json file.
-# write it in ./fsm_model
-def dict_switch_json(fsm_dict={}):
-    file_name = '{name}.{type}'
-    file_name = abspath(dirname(__file__)) + "\\fsm_model\\" + file_name.format(name=fsm_dict['name'], type='json')
-
-    jsObj = json.dumps(fsm_dict)
-    fileObject = open(file_name, mode='w')
-    fileObject.write(jsObj)
-    fileObject.close()
-
-# read the json file(localed in ./fsm_model) and switch it to dict.
-def json_switch_dict(json_name=str):
-    file_name = '{name}.{type}'
-    file_name = abspath(dirname(__file__)) + "\\fsm_model\\" + file_name.format(name=json_name, type='json')
-    with open(file_name) as json_file:
-        return json.load(json_file)
-
-'''
-name: dns-http,
-S0: DNS_query,
-S1: DNS_query_response,
-S2: HTTP(GET).
-associate可以理解为把其中的值提取出来，变成变量在自动机匹配中使用，其key必须唯一！
-extract可以理解为拿出一些输出型数据，用于最后的语句输出
-'''
 test_dict = {
-    'name': 'dns_http',
+    'name': 'dns_http_1',
     'states_names': ['S0', 'S1', 'S2'],
     'head': 'S0',
     'states': [
@@ -47,7 +20,8 @@ test_dict = {
                 ],
                 'associate': [
                     'IP.src',
-                    'IP.dst'
+                    'IP.dst',
+                    'DNS.domain'
                 ],
                 'goto': 'S1'
             }
@@ -57,7 +31,8 @@ test_dict = {
         {
             'name': 'S1',
             'rule': [
-                {'name': 'State', 'match_dict': {'IP.src': 'S0.dst', 'IP.dst': 'S0.src'}},
+                {'name': 'State', 'match_dict': {'IP.src': 'S0.dst', 'IP.dst': 'S0.src', 'DNS.domain': 'S0.domain'}},
+                {'name': 'IP', 'match_dict': {'proto': 17}},
                 {'name': 'UDP', 'match_dict': {'sport': 53}},
                 {'name': 'DNS', 'match_dict': {'qr': 1}}
             ],
@@ -76,7 +51,7 @@ test_dict = {
         {
             'name': 'S2',
             'rule': [
-                {'name': 'State', 'match_dict': {'IP.src': 'S0.src'}},
+                {'name': 'State', 'match_dict': {'IP.src': 'S0.src', 'HTTP.host': 'S0.domain'}},
                 {'name': 'TCP', 'match_dict': {'dport': 80}},
                 {'name': 'Raw', 'match_dict': {}}
             ],
@@ -94,5 +69,4 @@ test_dict = {
     ]
 }
 
-# # example
 dict_switch_json(test_dict)

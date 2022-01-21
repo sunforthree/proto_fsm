@@ -1,6 +1,6 @@
 from scapy.arch.windows import show_interfaces
 from scapy.sendrecv import sniff
-from scapy.all import IP, ls, UDP, DNS, DNSQR, sr1
+from scapy.all import IP, ls, UDP, DNS, DNSQR, sr1, rdpcap
 from Event import Event
 from scapy2dict import to_dict
 
@@ -20,11 +20,14 @@ if __name__ == '__main__':
     # print(str)
 
     # Craft a DNS request and capture the returned DNS response.
-    dns_req = IP(dst='8.8.8.8')/UDP(dport=53)/DNS(rd=1, qd=DNSQR(qname='www.baidu.com'))
-    answer = sr1(dns_req, verbose=0)
+    # dns_req = IP(dst='8.8.8.8')/UDP(dport=53)/DNS(rd=1, qd=DNSQR(qname='www.baidu.com'))
+    # answer = sr1(dns_req, verbose=0)
 
-    ls(answer[IP])
-    dns_req_dict = to_dict(dns_req)
-    print(dns_req_dict)
-    answer_dict = to_dict(answer)
-    print(answer_dict.get('IP'))
+    # ls(answer[IP])
+    # dns_req_dict = to_dict(dns_req)
+    # print(dns_req_dict)
+    # answer_dict = to_dict(answer)
+    # print(answer_dict.get('IP'))
+    pkts = rdpcap('./dns_http_3packages.pcapng')
+    http_dict = to_dict(pkts[2])
+    print(http_dict.get('Raw'))

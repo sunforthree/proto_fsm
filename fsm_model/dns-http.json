@@ -6,9 +6,95 @@
         "S2"
     ],
     "head": "S0",
-    "transitions": {
-        "trans_S0_to_S1": {
-            "rule_S0_to_S1": [
+    "states": [
+        {
+            "name": "S0",
+            "rule": [
+                {
+                    "name": "UDP",
+                    "match_dict": {
+                        "dport": 53
+                    }
+                },
+                {
+                    "name": "DNS",
+                    "match_dict": {
+                        "qr": 0
+                    }
+                }
+            ],
+            "action": {
+                "associate": {
+                    "keys": [
+                        "src",
+                        "dst"
+                    ]
+                },
+                "extract": [
+                    {
+                        "layer": "DNS",
+                        "extract_list": [
+                            "qr"
+                        ]
+                    }
+                ],
+                "goto": "S1"
+            }
+        },
+        {
+            "name": "S1",
+            "rule": [
+                {
+                    "name": "UDP",
+                    "match_dict": {
+                        "sport": 53
+                    }
+                },
+                {
+                    "name": "DNS",
+                    "match_dict": {
+                        "qr": 1
+                    }
+                }
+            ],
+            "action": {
+                "associate": {
+                    "keys": [
+                        "src",
+                        "dst"
+                    ]
+                },
+                "extract": [
+                    {
+                        "layer": "DNS",
+                        "extract_list": [
+                            "qr"
+                        ]
+                    }
+                ],
+                "goto": "S2"
+            }
+        },
+        {
+            "name": "S2",
+            "rule": [
+                {
+                    "name": "TCP",
+                    "match_dict": {
+                        "dport": 80
+                    }
+                }
+            ],
+            "action": {
+                "associate": {}
+            }
+        }
+    ],
+    "transitions": [
+        {
+            "source_state": "S0",
+            "target_state": "S1",
+            "rule": [
                 {
                     "name": "IP",
                     "match_dict": {
@@ -29,28 +115,30 @@
                     }
                 }
             ],
-            "action_S0_to_S1": [
+            "action": [
                 {
                     "name": "IP",
-                    "action_dict": [
+                    "extract_list": [
                         "src",
                         "dst"
                     ]
                 },
                 {
                     "name": "UDP",
-                    "action_dict": []
+                    "extract_list": []
                 },
                 {
                     "name": "DNS",
-                    "action_dict": [
+                    "extract_list": [
                         "qr"
                     ]
                 }
             ]
         },
-        "trans_S1_to_S2": {
-            "rule_S1_to_S2": [
+        {
+            "source_state": "S1",
+            "target_state": "S2",
+            "rule": [
                 {
                     "name": "IP",
                     "match_dict": {
@@ -71,25 +159,25 @@
                     }
                 }
             ],
-            "action_S1_to_S2": [
+            "action": [
                 {
                     "name": "IP",
-                    "action_dict": [
+                    "extract_list": [
                         "src",
                         "dst"
                     ]
                 },
                 {
                     "name": "UDP",
-                    "action_dict": []
+                    "extract_list": []
                 },
                 {
                     "name": "DNS",
-                    "action_dict": [
+                    "extract_list": [
                         "qr"
                     ]
                 }
             ]
         }
-    }
+    ]
 }
