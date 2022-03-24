@@ -1,0 +1,1 @@
+{"name": "S7_User_Data", "states_names": ["S0"], "head": "S0", "states": [{"name": "S0", "rule": [{"name": "S7COMM", "match_dict": {"header_rosctr": "7"}}], "action": {"extract": [{"layer": "S7COMM", "extract_list": ["header_rosctr"]}], "associate": [], "goto": ""}}], "format": "\u6b64\u6b21\u63d0\u53d6\u5185\u5bb9\u4e3a%(S0.header_rosctr)s."}

@@ -1,7 +1,9 @@
 from os.path import abspath, dirname
 import json
+from struct import pack
 from scapy.all import rdpcap, ls
 from scapy2dict import to_dict
+import time
 
 # switch the dict to the json file.
 # write it in ./fsm_model
@@ -22,6 +24,17 @@ if __name__ == '__main__':
     # print(test_dict)
     # dict_switch_json(test_dict)
     packet_list = rdpcap('dns_http_3packages.pcapng')
-    ls(packet_list[2])
-    print(to_dict(packet_list[2]))
-    print(to_dict(packet_list[0]).get('Raw'))
+    # ls(packet_list[2])
+    
+    # start
+    # get the packet time.
+    time_local = time.localtime(packet_list[2].time)
+    dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
+    # print(dt)
+    # end.
+
+    print(to_dict(packet_list[1]))
+    print(to_dict(packet_list[2]).get('Raw'))
+
+    raw = to_dict(packet_list[2]).get('Raw')
+    print(raw['load'])

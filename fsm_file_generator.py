@@ -34,6 +34,7 @@ test_dict = {
     'states': [
         {
             'name': 'S0',
+            'flag': 'DNS',
             'rule': [
                 {'name': 'IP', 'match_dict': {'proto': 17}},
                 {'name': 'UDP', 'match_dict': {'dport': 53}},
@@ -43,7 +44,8 @@ test_dict = {
             'action': {
                 'extract': [
                     {'layer': 'IP', 'extract_list': ['src', 'dst']},
-                    {'layer': 'DNS', 'extract_list': ['qr']}
+                    {'layer': 'Time', 'extract_list': ['format_time']}
+                    # {'layer': 'DNS', 'extract_list': ['qr']}
                 ],
                 'associate': [
                     'IP.src',
@@ -56,6 +58,7 @@ test_dict = {
 
         {
             'name': 'S1',
+            'flag': 'DNS',
             'rule': [
                 {'name': 'State', 'match_dict': {'IP.src': 'S0.dst', 'IP.dst': 'S0.src'}},
                 {'name': 'UDP', 'match_dict': {'sport': 53}},
@@ -64,7 +67,7 @@ test_dict = {
 
             'action': {
                 'extract': [ 
-                    {'layer': 'DNS', 'extract_list': ['qr']}
+                    # {'layer': 'DNS', 'extract_list': ['qr']}
                 ],
                 'associate': [
                     
@@ -75,10 +78,11 @@ test_dict = {
 
         {
             'name': 'S2',
+            'flag': 'Raw',
             'rule': [
                 {'name': 'State', 'match_dict': {'IP.src': 'S0.src'}},
                 {'name': 'TCP', 'match_dict': {'dport': 80}},
-                {'name': 'Raw', 'match_dict': {}}
+                {'name': 'Raw', 'match_dict': { }}
             ],
             'action': {
                 'extract': [
@@ -91,8 +95,46 @@ test_dict = {
                 'goto': ''
             }
         }
-    ]
+    ],
+    
+        # This format is experimental.
+        # Use the extract keys above.
+        # eg:
+        # {}在{}时通过{}访问了目标主机{}，其payload为{}。
+    
+    'format': '%(S0.src)s在%(S0.format_time)s时通过%(S0.dst)s访问了目标主机%(S2.dst)s，其payload为%(S2.load)s。'
 }
 
-# # example
+'''
+name: S7_User_Data,
+S0: S7COMM.
+单包测试样例
+'''
+s7_test_dict = {
+    'name': 'S7_User_Data',
+    'states_names': ['S0'],
+    'head': 'S0',
+    'states': [
+        {
+            'name': 'S0',
+            'rule': [
+                {'name': 'S7COMM', 'match_dict': {'header_rosctr': '7'}}
+            ],
+            'action': {
+                'extract': [
+                    {'layer': 'S7COMM', 'extract_list': ['header_rosctr']}
+                    ],
+                'associate': [
+
+                ],
+                'goto': ''
+            }
+        }
+    ],
+    'format': '此次提取内容为%(S0.header_rosctr)s.'
+}
+
+
+# example
 dict_switch_json(test_dict)
+dict_switch_json(s7_test_dict)

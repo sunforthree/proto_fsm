@@ -13,6 +13,7 @@ class State:
         self.name = name
         self.Rule = Rule
         self.Action = Action
+        self.flag = str()
 
     def get_name(self):
         return self.name
@@ -22,6 +23,12 @@ class State:
 
     def get_Action(self):
         return self.Action
+
+    def set_flag(self, flag):
+        self.flag = flag
+
+    def get_flag(self):
+        return self.flag
 
 # find a dict of rules.
 # rule_list: a list of Parsers.
@@ -51,6 +58,9 @@ class Action:
         self.goto = ''
 
     def get_extract_list(self):
+        return self.extract_dict
+
+    def get_extract_dict(self):
         return self.extract_dict
 
     def get_associate_list(self):
